@@ -1,8 +1,8 @@
 class PersonModel {
   final String userId;
-  final String id;
+  final int id;
   final String title;
-  final bool completed;
+  final String email;
 
-  PersonModel(this.userId, this.id, this.title, this.completed);
+  PersonModel(this.userId, this.id, this.title, this.email);
 }

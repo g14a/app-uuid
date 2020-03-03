@@ -41,17 +41,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<List<PersonModel>> _getUsers() async {
-    final String url = "https://jsonplaceholder.typicode.com/todos/1";
+    final String url = "https://jsonplaceholder.typicode.com/users";
     var data = await http.get(url);
 
-    var jsonData = json.decode(data.body);
+    List<dynamic> jsonData = json.decode(data.body);
     debugPrint(data.body);
 
     List<PersonModel> users = [];
 
     for (var p in jsonData) {
       print("came into the loop");
-      PersonModel person = PersonModel(p['userId'],p['id'],p['title'],p['body']);
+      PersonModel person = PersonModel(p['username'],p['id'],p['name'],p['email']);
       print("the value is ${person.title}");
       users.add(person);
     }

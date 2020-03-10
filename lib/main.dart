@@ -108,13 +108,81 @@ class _MyHomePageState extends State<MyHomePage> {
                 return ListView.builder(
                   itemCount: 1,
                     itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            "https://images.pexels.com/photos/3839192/pexels-photo-3839192.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-                          ),
-                        ),
-                        title: Text(snapshot.data.name),
+                      return new Container(
+                       child: Card(
+                         child: Padding(
+                          padding: const EdgeInsets.all(30.0),
+                          child: Column(
+                           children: <Widget>[
+                             Padding(
+                               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                               child: Row(
+                               children: <Widget>[
+                                 Padding(
+                                   padding: const EdgeInsets.all(8),
+                                   child: Icon (
+                                    Icons.person,
+                                    size: 20.0,
+                                  ),
+                                 ),
+                                 Text(snapshot.data.name),
+                                 Spacer(),
+                               ],
+                              ),
+                             ),
+                             Padding(
+                               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                               child: Row(
+                               mainAxisAlignment: MainAxisAlignment.spaceAround,
+                               children: <Widget>[
+                                 Padding(
+                                   padding: const EdgeInsets.all(8),
+                                   child: Icon (
+                                    Icons.phone,
+                                    size: 20.0,
+                                  ),
+                                 ),
+                                 Text(snapshot.data.phone),
+                                 Spacer(),
+                               ],
+                              ),
+                             ),
+                             Padding(
+                               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                               child: Row(
+                               children: <Widget>[
+                                 Padding(
+                                   padding: const EdgeInsets.all(8),
+                                   child: Icon (
+                                    Icons.email,
+                                    size: 20.0,
+                                  ),
+                                 ),
+                                 Text(snapshot.data.email),
+                                 Spacer(),
+                               ],
+                              ),
+                             ),
+                             Padding(
+                               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                               child: Row(
+                               children: <Widget>[
+                                 Padding(
+                                   padding: const EdgeInsets.all(8),
+                                   child: Icon (
+                                    Icons.location_city,
+                                    size: 20.0,
+                                  ),
+                                 ),
+                                 Text(snapshot.data.address),
+                                 Spacer(),
+                               ],
+                              ),
+                             ),
+                           ],
+                         ),
+                         )
+                       ),
                       );
                     }
                 );

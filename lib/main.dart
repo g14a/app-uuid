@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_uuid/models/models.dart';
+import 'package:flutter_uuid/models/users.dart';
 import 'package:flutter_uuid/page_two.dart';
 import 'package:http/http.dart' as http;
 
@@ -37,26 +37,24 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    this._getUsers();
+    this._getContact();
   }
 
-  Future<List<PersonModel>> _getUsers() async {
-    final String url = "https://jsonplaceholder.typicode.com/users";
-    var data = await http.get(url);
+  Future<ContactInfoModel> _getContact() async {
+    final String url = "http://192.168.0.106:8000/users/c16a/contactinfo";
+    var data = await http.get(
+      Uri.encodeFull(url),
+      headers: {
+        "Accept": "application/json"
+      }
+    );
 
-    List<dynamic> jsonData = json.decode(data.body);
     debugPrint(data.body);
+    final jsonData = json.decode(data.body);
 
-    List<PersonModel> users = [];
+    ContactInfoModel contactInfoModel = ContactInfoModel(jsonData['address'],jsonData['email'],jsonData['name'],jsonData['phone']);
 
-    for (var p in jsonData) {
-      print("came into the loop");
-      PersonModel person = PersonModel(p['username'],p['id'],p['name'],p['email']);
-      print("the value is ${person.title}");
-      users.add(person);
-    }
-
-    return users;
+    return contactInfoModel;
   }
 
   @override
@@ -98,10 +96,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: new Container(
         child: new FutureBuilder(
-            future: _getUsers(),
-            builder: (BuildContext context, AsyncSnapshot<List<PersonModel>> snapshot) {
+            future: _getContact(),
+            builder: (BuildContext context, AsyncSnapshot<ContactInfoModel> snapshot) {
               if (snapshot.data == null) {
-                print("null data");
                 return Container(
                   child: Center(
                     child: Text("Loading..."),
@@ -109,10 +106,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               } else {
                 return ListView.builder(
-                    itemCount: snapshot.data.length,
+                  itemCount: 1,
                     itemBuilder: (BuildContext context, int index) {
                       return ListTile(
-                        title: Text(snapshot.data[index].userId),
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            "https://images.pexels.com/photos/3839192/pexels-photo-3839192.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                          ),
+                        ),
+                        title: Text(snapshot.data.name),
                       );
                     }
                 );

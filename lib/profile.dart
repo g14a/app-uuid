@@ -22,31 +22,6 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    this._getContact();
-  }
-
-  Future<ContactInfoModel> _getContact() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String currentUser = prefs.getString('username');
-    String jwtToken = prefs.getString('token');
-    
-    final String url = "http://192.168.1.3:8000/users/$currentUser/contactinfo";
-
-    var data = await http.get(
-      Uri.encodeFull(url),
-      headers: {
-        "Accept": "application/json",
-        "Authorization": 'Bearer $jwtToken'
-      }
-    );
-
-    print(data.body);
-
-    final jsonData = json.decode(data.body);
-
-    ContactInfoModel contactInfoModel = ContactInfoModel(jsonData['address'],jsonData['email'],jsonData['name'],jsonData['phone']);
-    
-    return contactInfoModel;
   }
 
   @override
@@ -73,7 +48,7 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       body: new Container(
         child: new FutureBuilder(
-            future: _getContact(),
+            future: _getContactInfo(),
             builder: (BuildContext context, AsyncSnapshot<ContactInfoModel> snapshot) {
               if (snapshot.data == null) {
                 print("null data");
@@ -88,6 +63,7 @@ class ProfilePageState extends State<ProfilePage> {
                   itemCount: 1,
                     itemBuilder: (BuildContext context, int index) {
                       return new Container(
+                        // ContactInfo Card
                        child: Card(
                          child: Padding(
                           padding: const EdgeInsets.all(30.0),
@@ -162,6 +138,8 @@ class ProfilePageState extends State<ProfilePage> {
                          ),
                          )
                        ),
+                      // EducationModel Card                  
+                      
                       );
                     }
                 );
@@ -171,4 +149,53 @@ class ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+
+   Future<ContactInfoModel> _getContactInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String currentUser = prefs.getString('username');
+    String jwtToken = prefs.getString('token');
+    
+    final String url = "http://192.168.1.3:8000/users/$currentUser/contactinfo";
+
+    var data = await http.get(
+      Uri.encodeFull(url),
+      headers: {
+        "Accept": "application/json",
+        "Authorization": 'Bearer $jwtToken'
+      }
+    );
+
+    print(data.body);
+
+    final jsonData = json.decode(data.body);
+
+    ContactInfoModel contactInfoModel = ContactInfoModel(jsonData['address'],jsonData['email'],jsonData['name'],jsonData['phone']);
+    
+    return contactInfoModel;
+  }
+
+  Future<EducationInfoModel> _getEducationInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String currentUser = prefs.getString('username');
+    String jwtToken = prefs.getString('token');
+    
+    final String url = "http://192.168.1.3:8000/users/$currentUser/educationinfo";
+
+    var data = await http.get(
+      Uri.encodeFull(url),
+      headers: {
+        "Accept": "application/json",
+        "Authorization": 'Bearer $jwtToken'
+      }
+    );
+
+    print(data.body);
+
+    final jsonData = json.decode(data.body);
+
+    EducationInfoModel educationInfoModel= EducationInfoModel(jsonData['primary'],jsonData['secondary'],jsonData['university']);
+    
+    return educationInfoModel;
+  }
+
 }

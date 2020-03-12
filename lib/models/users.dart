@@ -13,3 +13,11 @@ class ContactInfoModel {
 
   ContactInfoModel(this.address, this.email, this.name, this.phone);
 }
+
+class EducationInfoModel {
+  final String primary;
+  final String secondary;
+  final String university;
+
+  EducationInfoModel(this.primary, this.secondary, this.university);
+}

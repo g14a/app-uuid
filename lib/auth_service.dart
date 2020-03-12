@@ -12,8 +12,8 @@ class AuthService {
     final response = await http.post(url, body: json.encode(request.toJson()));
 
     print(response.headers['token']);
-    
-    if(response.statusCode == 200) {
+
+    if (response.statusCode == 200) {
       prefs.setString('token', response.headers['token']);
       return true;
     }

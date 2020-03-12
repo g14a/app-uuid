@@ -19,8 +19,9 @@ Container educationCard() {
           ),
         );
       } else {
-        print("came inside snapshot data");
         return ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
             itemCount: 1,
             itemBuilder: (BuildContext context, int index) {
               return new Container(
@@ -37,7 +38,7 @@ Container educationCard() {
                             Padding(
                               padding: const EdgeInsets.all(8),
                               child: Icon(
-                                Icons.person,
+                                Icons.school,
                                 size: 20.0,
                               ),
                             ),

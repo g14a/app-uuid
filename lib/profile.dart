@@ -39,6 +39,8 @@ class ProfilePageState extends State<ProfilePage> {
         ]),
       ),
       body: new ListView(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
         children: <Widget>[contactCard(), educationCard()],
       ),
     );

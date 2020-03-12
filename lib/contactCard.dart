@@ -21,6 +21,8 @@ Container contactCard() {
       } else {
         print("came inside snapshot data");
         return ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
             itemCount: 1,
             itemBuilder: (BuildContext context, int index) {
               return new Container(
@@ -110,8 +112,6 @@ Future<ContactInfoModel> _getContactInfo() async {
   String currentUser = prefs.getString('username');
   String jwtToken = prefs.getString('token');
 
-  print("current user is" + currentUser);
-  
   final String url = "http://192.168.1.3:8000/users/$currentUser/contactinfo";
 
   var data = await http.get(Uri.encodeFull(url), headers: {

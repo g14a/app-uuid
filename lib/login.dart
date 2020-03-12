@@ -121,8 +121,6 @@ class _LoginPageState extends State<LoginPage> {
     var username = usernameController.text;
     var password = passwordController.text;
 
-    print(username + password);
-
     var loginRequest = LoginRequest(username, password);
 
     return AuthService.login(loginRequest);

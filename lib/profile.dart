@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_uuid/models/users.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key key, this.title}) : super(key:key);
@@ -24,19 +26,26 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Future<ContactInfoModel> _getContact() async {
-    final String url = "http://192.168.1.2:8000/users/c16a/contactinfo";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String currentUser = prefs.getString('username');
+    String jwtToken = prefs.getString('token');
+    
+    final String url = "http://192.168.1.3:8000/users/$currentUser/contactinfo";
+
     var data = await http.get(
       Uri.encodeFull(url),
       headers: {
-        "Accept": "application/json"
+        "Accept": "application/json",
+        "Authorization": 'Bearer $jwtToken'
       }
     );
 
-    debugPrint(data.body);
+    print(data.body);
+
     final jsonData = json.decode(data.body);
 
     ContactInfoModel contactInfoModel = ContactInfoModel(jsonData['address'],jsonData['email'],jsonData['name'],jsonData['phone']);
-
+    
     return contactInfoModel;
   }
 
@@ -67,12 +76,14 @@ class ProfilePageState extends State<ProfilePage> {
             future: _getContact(),
             builder: (BuildContext context, AsyncSnapshot<ContactInfoModel> snapshot) {
               if (snapshot.data == null) {
+                print("null data");
                 return Container(
                   child: Center(
                     child: Text("Loading..."),
                   ),
                 );
               } else {
+                print("came inside snapshot data");
                 return ListView.builder(
                   itemCount: 1,
                     itemBuilder: (BuildContext context, int index) {

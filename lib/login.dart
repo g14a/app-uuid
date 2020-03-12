@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_uuid/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -6,6 +8,23 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    SharedPreferences.setMockInitialValues({});
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -49,8 +68,10 @@ class _LoginPageState extends State<LoginPage> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey),
                         focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.green))),
-                    obscureText: true,
+                            borderSide: BorderSide(color: Colors.green)
+                            )
+                    ),
+                    controller: usernameController,
                   ),
                   SizedBox(height: 10.0),
                   TextField(
@@ -61,7 +82,11 @@ class _LoginPageState extends State<LoginPage> {
                             fontWeight: FontWeight.bold,
                             color: Colors.grey),
                         focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.green))),
+                            borderSide: BorderSide(color: Colors.green)
+                            )
+                    ),
+                    controller: passwordController,
+                    obscureText: true,
                   ),
                   SizedBox(height: 40.0),
                   Container(
@@ -70,10 +95,14 @@ class _LoginPageState extends State<LoginPage> {
                     child: Container(
                       decoration: BoxDecoration(
                           color: Colors.green,
-                          borderRadius: BorderRadius.circular(40.0)),
+                          borderRadius: BorderRadius.circular(40.0),
+                        ),
                       child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).pushNamed("/profile");
+                        onTap: () async {
+                          if (await login()) {
+                            saveLoginPrefs(usernameController.text);
+                            Navigator.of(context).pushNamed("/profile");  
+                          }
                         },
                         child: 
                             Center(
@@ -81,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Montserrat',
-                                      color: Colors.white)
+                                      color: Colors.white),
                               ),
                             ),
                       ),
@@ -89,6 +118,35 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               )),
-        ]));
+        ]
+      )
+    );
   }
+
+  Future<bool> login() {
+    var username = usernameController.text;
+    var password = passwordController.text;
+
+    var loginRequest = LoginRequest(username, password);
+
+    print(loginRequest);
+
+    return AuthService.login(loginRequest);
+  }
+}
+
+Future<void> saveLoginPrefs(String username) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+}
+
+Future<String> getUsername() async {
+  final prefs = await SharedPreferences.getInstance();
+  final username = prefs.getString('username');
+
+  if (username == null) {
+    return '';
+  }
+
+  return username;
 }

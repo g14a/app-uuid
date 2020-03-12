@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       home: new SignupPage(),
       routes: <String, WidgetBuilder> {
         "/login": (BuildContext context) => new LoginPage(),
-        "/profile": (BuildContext context) => new ProfilePage(title: "Users")
+        "/profile": (BuildContext context) => new ProfilePage(title: "Welcome")
       },
     );
   }

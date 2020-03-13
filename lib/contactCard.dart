@@ -3,26 +3,47 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_uuid/models/users.dart';
+import 'package:flutter_uuid/login.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Container contactCard() {
   return Container(
       child: FutureBuilder(
-    future: _getContactInfo(),
+    future: getContactInfo(),
     builder: (BuildContext context, AsyncSnapshot<ContactInfoModel> snapshot) {
       if (snapshot.data == null) {
-        print("null data");
         return Container(
-          child: Center(
-            child: Text("Loading..."),
-          ),
-        );
+            child: Card(
+                child: Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 8.0, bottom: 8.0, left: 2.0),
+                            child: Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 15.0,
+                                  ),
+                                ),
+                                Text(
+                                    "No Contact Data. Try adding it in Settings"),
+                                Spacer(),
+                              ],
+                            ),
+                          ),
+                        ]))));
       } else {
-        print("came inside snapshot data");
         return ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
             itemCount: 1,
             itemBuilder: (BuildContext context, int index) {
               return new Container(
@@ -107,24 +128,24 @@ Container contactCard() {
   ));
 }
 
-Future<ContactInfoModel> _getContactInfo() async {
+Future<ContactInfoModel> getContactInfo() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String currentUser = prefs.getString('username');
+  String currentUser = await getUsername();
   String jwtToken = prefs.getString('token');
 
-  final String url = "http://192.168.1.3:8000/users/$currentUser/contactinfo";
+  final String url = "http://192.168.1.5:8000/users/$currentUser/contactinfo";
 
-  var data = await http.get(Uri.encodeFull(url), headers: {
+  var response = await http.get(Uri.encodeFull(url), headers: {
     "Accept": "application/json",
     "Authorization": 'Bearer $jwtToken'
   });
 
-  print(data.body);
-
-  final jsonData = json.decode(data.body);
+  final jsonData = json.decode(response.body);
 
   ContactInfoModel contactInfoModel = ContactInfoModel(jsonData['address'],
       jsonData['email'], jsonData['name'], jsonData['phone']);
+
+  prefs.setString('name', jsonData['name']);
 
   return contactInfoModel;
 }

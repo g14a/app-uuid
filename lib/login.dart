@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_uuid/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -98,6 +99,15 @@ class _LoginPageState extends State<LoginPage> {
                               if (await login()) {
                                 saveLoginPrefs(usernameController.text);
                                 Navigator.of(context).pushNamed("/profile");
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: "Unable to login",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIos: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
                               }
                             },
                             child: Center(

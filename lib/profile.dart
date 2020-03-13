@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_uuid/contactCard.dart';
 import 'package:flutter_uuid/educationCard.dart';
+import 'package:flutter_uuid/models/users.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key key, this.title}) : super(key: key);
@@ -14,9 +15,14 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
+  String initials = "";
+  String nameText = "";
+  String email = "";
+
   @override
   void initState() {
     super.initState();
+    setNameInitials();
   }
 
   @override
@@ -29,11 +35,11 @@ class ProfilePageState extends State<ProfilePage> {
       drawer: new Drawer(
         child: new ListView(children: <Widget>[
           new UserAccountsDrawerHeader(
-            accountName: new Text("Gowtham Munukutla"),
-            accountEmail: new Text("gowtham@atlan.com"),
+            accountName: new Text(nameText),
+            accountEmail: new Text(email),
             currentAccountPicture: new CircleAvatar(
               backgroundColor: Colors.black,
-              child: new Text("GM"),
+              child: new Text(initials),
             ),
           ),
         ]),
@@ -44,5 +50,18 @@ class ProfilePageState extends State<ProfilePage> {
         children: <Widget>[contactCard(), educationCard()],
       ),
     );
+  }
+
+  Future<void> setNameInitials() async {
+
+    ContactInfoModel model = await getContactInfo();
+
+    List textArray = model.name.split(' ').toList();
+
+    setState(() {
+      initials = textArray[0][0] + textArray[1][0];
+      nameText = model.name;
+      email = model.email;
+    });
   }
 }

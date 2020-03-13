@@ -4,12 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_uuid/models/users.dart';
 import 'package:flutter_uuid/login.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Container contactCard() {
-  return Container(
+  return Container( 
       child: FutureBuilder(
     future: getContactInfo(),
     builder: (BuildContext context, AsyncSnapshot<ContactInfoModel> snapshot) {

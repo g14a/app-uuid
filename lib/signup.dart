@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_uuid/auth_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -9,12 +10,18 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  bool validate = false;
 
   @override
   void dispose() {
     usernameController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -86,9 +93,20 @@ class _SignupPageState extends State<SignupPage> {
                             elevation: 7.0,
                             child: GestureDetector(
                               onTap: () async {
-                                 if (await signup()) {
+                                setState(() {
+                                  usernameController.text.isEmpty || passwordController.text.isEmpty ? validate = true : validate = false;
+                                });
+                                 if (await signup() && validate) {
                                    Navigator.of(context).pushNamed("/login");
-                                 } 
+                                 } else {
+                                   Fluttertoast.showToast(
+                                    msg: "Unable to sign up",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                                 }
                               },
                               child: Center(
                                 child: Text(
@@ -118,7 +136,7 @@ class _SignupPageState extends State<SignupPage> {
                               Navigator.of(context).pushNamed("/login");
                             },
                             child: Center(
-                              child: Text('Already have an account?   Login',
+                              child: Text('Already have an account?  Login',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Montserrat')),
@@ -131,12 +149,15 @@ class _SignupPageState extends State<SignupPage> {
             ]));
   }
 
-  Future<bool> signup() {
+  Future<bool> signup() async {
     var username = usernameController.text;
     var password = passwordController.text;
 
-    var signupRequest = SignUpRequest(username, password);
+    if (username.isNotEmpty && password.isNotEmpty) {
+      var signupRequest = SignUpRequest(username, password);
+      return AuthService.signup(signupRequest);
+    }
 
-    return AuthService.signup(signupRequest);
+    return false;
   }
 }

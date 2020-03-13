@@ -25,8 +25,6 @@ class AuthService {
   static Future<bool> signup(SignUpRequest request) async {
     var url = "http://192.168.1.5:8000/users/signup";
 
-    print(request.toJson());
-
     final response = await http.post(url, body: json.encode(request.toJson()));
 
     if (response.statusCode == 200) {

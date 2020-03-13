@@ -42,6 +42,9 @@ class ProfilePageState extends State<ProfilePage> {
               child: new Text(initials),
             ),
           ),
+          new ListTile(
+            title: new Text("Settings"),
+          )
         ]),
       ),
       body: new ListView(

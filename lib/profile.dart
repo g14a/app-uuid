@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_uuid/contactCard.dart';
 import 'package:flutter_uuid/educationCard.dart';
 import 'package:flutter_uuid/models/users.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key key, this.title}) : super(key: key);
@@ -18,6 +19,8 @@ class ProfilePageState extends State<ProfilePage> {
   String initials = "";
   String nameText = "";
   String email = "";
+
+  List<Widget> cards = List<Widget>();
 
   @override
   void initState() {
@@ -44,19 +47,61 @@ class ProfilePageState extends State<ProfilePage> {
           ),
           new ListTile(
             title: new Text("Settings"),
+          ),
+          new ListTile(
+            title: new Text("Logout"),
+            onTap: () {
+              logout();
+              Navigator.popUntil(context, ModalRoute.withName('/login'));
+            },
           )
         ]),
       ),
-      body: new ListView(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        children: <Widget>[contactCard(), educationCard()],
+      body: ListView.builder(
+        itemCount: 1,
+        itemBuilder: (BuildContext context, int index) {
+          return cards.isEmpty
+              ? ListView(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  children: <Widget>[contactCard(), educationCard()],
+                )
+              : ListView(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  children: cards,
+                );
+        },
       ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 30, right: 20),
+        child: FloatingActionButton(
+          child: Icon(Icons.sync),
+          onPressed: refreshProfilePage,
+          backgroundColor: Colors.blue,
+      ),)
     );
+  } 
+
+  Future<Null> refreshProfilePage() async {
+    await Future.delayed(Duration(milliseconds: 500));
+
+    Widget c = contactCard();
+    Widget e = educationCard();
+
+    setState(() {
+      cards = <Widget>[c, e];
+    });
+
+    return null;
+  }
+
+  logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
   }
 
   Future<void> setNameInitials() async {
-
     ContactInfoModel model = await getContactInfo();
 
     List textArray = model.name.split(' ').toList();

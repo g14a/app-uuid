@@ -35,6 +35,23 @@ class AuthService {
   }
 }
 
+class AddInfoService {
+    static Future<bool> addContactInfo(AddContactInfoRequest request) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String currentUser = prefs.getString('username');
+
+      var url = "http://192.168.1.5:8000/users/$currentUser/addcontactinfo";
+
+      final response = await http.post(url, body: json.encode(request.toJson()));
+
+      if (response.statusCode == 200) {
+          return true;
+      }
+
+      return false;
+  }
+}
+
 class LoginRequest {
   String username;
   String password;
@@ -60,6 +77,21 @@ class SignUpRequest {
     map["username"] = username;
     map["password"] = password;
     
+    return map;
+  }
+}
+
+class AddContactInfoRequest {
+  String name, email, phone;
+
+  AddContactInfoRequest(this.name, this.email, this.phone);
+
+  Map<String, String> toJson() {
+    var map = Map<String, String>();
+    map["name"] = name;
+    map["email"] = email;
+    map["phone"] = phone;
+
     return map;
   }
 }

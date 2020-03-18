@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_uuid/auth_service.dart';
+import 'package:flutter_uuid/services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class SignupPage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  _SignupPageState createState() => _SignupPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
+class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-  bool validate = false;
 
   @override
   void dispose() {
@@ -21,6 +21,7 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   void initState() {
+    SharedPreferences.setMockInitialValues({});
     super.initState();
   }
 
@@ -59,16 +60,17 @@ class _SignupPageState extends State<SignupPage> {
                   padding: EdgeInsets.only(top: 35.0, left: 20.0, right: 20.0),
                   child: Column(
                     children: <Widget>[
+                      SizedBox(height: 10.0),
                       TextField(
                         decoration: InputDecoration(
-                            labelText: 'Username',
+                            labelText: 'Username ',
                             labelStyle: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey),
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.green))),
-                                controller: usernameController,
+                        controller: usernameController,
                       ),
                       SizedBox(height: 10.0),
                       TextField(
@@ -80,66 +82,41 @@ class _SignupPageState extends State<SignupPage> {
                                 color: Colors.grey),
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.green))),
-                                controller: passwordController,
+                        controller: passwordController,
                         obscureText: true,
                       ),
-                      SizedBox(height: 50.0),
-                      Container(
-                          height: 60.0,
-                          child: Material(
-                            borderRadius: BorderRadius.circular(40.0),
-                            shadowColor: Colors.greenAccent,
-                            color: Colors.green,
-                            elevation: 7.0,
-                            child: GestureDetector(
-                              onTap: () async {
-                                setState(() {
-                                  usernameController.text.isEmpty || passwordController.text.isEmpty ? validate = true : validate = false;
-                                });
-                                 if (await signup() && validate) {
-                                   Navigator.of(context).pushNamed("/login");
-                                 } else {
-                                   Fluttertoast.showToast(
-                                    msg: "Unable to sign up",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
-                                 }
-                              },
-                              child: Center(
-                                child: Text(
-                                  'Signup',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Montserrat'),
-                                ),
-                              ),
-                            ),
-                          )),
-                      SizedBox(height: 30.0),
+                      SizedBox(height: 40.0),
                       Container(
                         height: 60.0,
                         color: Colors.transparent,
                         child: Container(
                           decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.black,
-                                  style: BorderStyle.solid,
-                                  width: 1.0),
-                              color: Colors.transparent,
-                              borderRadius: BorderRadius.circular(40.0)),
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(40.0),
+                          ),
                           child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).pushNamed("/login");
+                            onTap: () async {
+                              if (await login()) {
+                                saveLoginPrefs(usernameController.text);
+                                Navigator.of(context).pushNamed("/profile");
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: "Unable to login",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                              }
                             },
                             child: Center(
-                              child: Text('Already have an account?  Login',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Montserrat')),
+                              child: Text(
+                                'Login',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Montserrat',
+                                    color: Colors.white),
+                              ),
                             ),
                           ),
                         ),
@@ -149,15 +126,28 @@ class _SignupPageState extends State<SignupPage> {
             ]));
   }
 
-  Future<bool> signup() async {
+  Future<bool> login() {
     var username = usernameController.text;
     var password = passwordController.text;
 
-    if (username.isNotEmpty && password.isNotEmpty) {
-      var signupRequest = SignUpRequest(username, password);
-      return AuthService.signup(signupRequest);
-    }
+    var loginRequest = LoginRequest(username, password);
 
-    return false;
+    return AuthService.login(loginRequest);
   }
+}
+
+Future<void> saveLoginPrefs(String username) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('username', username);
+}
+
+Future<String> getUsername() async {
+  final prefs = await SharedPreferences.getInstance();
+  final username = prefs.getString('username');
+
+  if (username == null) {
+    return '';
+  }
+
+  return username;
 }

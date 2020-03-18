@@ -21,3 +21,10 @@ class EducationInfoModel {
 
   EducationInfoModel(this.primary, this.secondary, this.university);
 }
+
+class HealthInfoModel {
+  final String birthHospital;
+  final String bloodGroup;
+
+  HealthInfoModel(this.birthHospital, this.bloodGroup);
+}

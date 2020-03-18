@@ -2,16 +2,18 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_uuid/models/users.dart';
-import 'package:flutter_uuid/login.dart';
+import 'package:flutter_uuid/pages/login.dart';
+import 'package:flutter_uuid/models/models.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-Container contactCard() {
-  return Container( 
+Container educationCard() {
+  return Container(
       child: FutureBuilder(
-    future: getContactInfo(),
-    builder: (BuildContext context, AsyncSnapshot<ContactInfoModel> snapshot) {
+    future: _getEducationInfo(),
+    builder:
+        (BuildContext context, AsyncSnapshot<EducationInfoModel> snapshot) {
       if (snapshot.data == null) {
         return Container(
             child: Card(
@@ -28,12 +30,11 @@ Container contactCard() {
                                 Padding(
                                   padding: const EdgeInsets.all(10),
                                   child: Icon(
-                                    Icons.person,
+                                    FontAwesomeIcons.school,
                                     size: 15.0,
                                   ),
                                 ),
-                                Text(
-                                    "No Contact Data. Try adding it in Settings"),
+                                Text("No Education Data. Try adding it in Settings"),
                                 Spacer(),
                               ],
                             ),
@@ -51,68 +52,61 @@ Container contactCard() {
                     child: Padding(
                   padding: const EdgeInsets.all(30.0),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                        padding: const EdgeInsets.only(
+                            top: 8.0, bottom: 8.0, left: 2.0),
                         child: Row(
                           children: <Widget>[
                             Padding(
-                              padding: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(10),
                               child: Icon(
-                                Icons.person,
-                                size: 20.0,
+                                FontAwesomeIcons.school,
+                                size: 15.0,
                               ),
                             ),
-                            Text(snapshot.data.name),
+                            Text(" " + snapshot.data.primary),
                             Spacer(),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                        padding: const EdgeInsets.only(top: 2.0, bottom: 8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
                             Padding(
-                              padding: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(10),
                               child: Icon(
-                                Icons.phone,
-                                size: 20.0,
+                                FontAwesomeIcons.university,
+                                size: 18.0,
                               ),
                             ),
-                            Text(snapshot.data.phone),
+                            Text(snapshot.data.secondary),
                             Spacer(),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10, right: 5),
+                              child: Icon(
+                                Icons.school,
+                                size: 70.0,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                        padding: const EdgeInsets.only(bottom: 8.0),
                         child: Row(
                           children: <Widget>[
                             Padding(
-                              padding: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(10),
                               child: Icon(
-                                Icons.email,
+                                Icons.school,
                                 size: 20.0,
                               ),
                             ),
-                            Text(snapshot.data.email),
-                            Spacer(),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                        child: Row(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Icon(
-                                Icons.location_city,
-                                size: 20.0,
-                              ),
-                            ),
-                            Text(snapshot.data.address),
+                            Text(snapshot.data.university),
                             Spacer(),
                           ],
                         ),
@@ -127,12 +121,12 @@ Container contactCard() {
   ));
 }
 
-Future<ContactInfoModel> getContactInfo() async {
+Future<EducationInfoModel> _getEducationInfo() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String currentUser = await getUsername();
   String jwtToken = prefs.getString('token');
 
-  final String url = "http://192.168.1.5:8000/users/$currentUser/contactinfo";
+  final String url = "http://192.168.1.5:8000/users/$currentUser/educationinfo";
 
   var response = await http.get(Uri.encodeFull(url), headers: {
     "Accept": "application/json",
@@ -141,10 +135,8 @@ Future<ContactInfoModel> getContactInfo() async {
 
   final jsonData = json.decode(response.body);
 
-  ContactInfoModel contactInfoModel = ContactInfoModel(jsonData['address'],
-      jsonData['email'], jsonData['name'], jsonData['phone']);
+  EducationInfoModel educationInfoModel = EducationInfoModel(
+      jsonData['primary'], jsonData['secondary'], jsonData['university']);
 
-  prefs.setString('name', jsonData['name']);
-
-  return contactInfoModel;
+  return educationInfoModel;
 }

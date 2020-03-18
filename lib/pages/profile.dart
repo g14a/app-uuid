@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_uuid/contactCard.dart';
-import 'package:flutter_uuid/educationCard.dart';
-import 'package:flutter_uuid/models/users.dart';
+import 'package:flutter_uuid/pages/contactCard.dart';
+import 'package:flutter_uuid/pages/educationCard.dart';
+import 'package:flutter_uuid/pages/healthCard.dart';
+import 'package:flutter_uuid/models/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -64,7 +65,7 @@ class ProfilePageState extends State<ProfilePage> {
               ? ListView(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  children: <Widget>[contactCard(), educationCard()],
+                  children: <Widget>[contactCard(), educationCard(), healthCard()],
                 )
               : ListView(
                   scrollDirection: Axis.vertical,
@@ -88,9 +89,10 @@ class ProfilePageState extends State<ProfilePage> {
 
     Widget c = contactCard();
     Widget e = educationCard();
+    Widget h = healthCard();
 
     setState(() {
-      cards = <Widget>[c, e];
+      cards = <Widget>[c, e, h];
     });
 
     return null;

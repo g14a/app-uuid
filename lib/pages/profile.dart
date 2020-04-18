@@ -48,6 +48,9 @@ class ProfilePageState extends State<ProfilePage> {
           ),
           new ListTile(
             title: new Text("Settings"),
+            onTap: () {
+              Navigator.of(context).pushNamed('/settings');
+            },
           ),
           new ListTile(
             title: new Text("Logout"),

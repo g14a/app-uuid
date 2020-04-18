@@ -94,7 +94,7 @@ class _SignupPageState extends State<SignupPage> {
                             child: GestureDetector(
                               onTap: () async {
                                 setState(() {
-                                  usernameController.text.isEmpty || passwordController.text.isEmpty ? validate = true : validate = false;
+                                  usernameController.text.isNotEmpty && passwordController.text.isNotEmpty ? validate = true : validate = false;
                                 });
                                  if (await signup() && validate) {
                                    Navigator.of(context).pushNamed("/login");

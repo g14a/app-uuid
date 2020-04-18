@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_uuid/services/auth_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class AddContactInfo extends StatefulWidget {
+class AddEducationInfo extends StatefulWidget {
   @override
-  _AddContactInfoState createState() => _AddContactInfoState();
+  _AddEducationInfoState createState() => _AddEducationInfoState();
 }
 
-class _AddContactInfoState extends State<AddContactInfo> {
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
+class _AddEducationInfoState extends State<AddEducationInfo> {
+  final primarySchoolController = TextEditingController();
+  final secondarySchoolController = TextEditingController();
+  final universityController = TextEditingController();
 
   bool validate = false;
 
   @override
   void dispose() {
-    nameController.dispose();
-    emailController.dispose();
-    phoneController.dispose();
+    primarySchoolController.dispose();
+    secondarySchoolController.dispose();
+    universityController.dispose();
     super.dispose();
   }
 
@@ -31,11 +31,9 @@ class _AddContactInfoState extends State<AddContactInfo> {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("Add Contact Info"),
+          title: new Text("Add Education Info"),
           leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
+            onTap: () => Navigator.pop(context),
             child: Icon (
               Icons.arrow_back,
             ),
@@ -46,15 +44,14 @@ class _AddContactInfoState extends State<AddContactInfo> {
               child: Text("SAVE", style: TextStyle(fontSize: 15)),
               onPressed: () async {
                 setState(() {
-                  nameController.text.isNotEmpty ||
-                    emailController.text.isNotEmpty|| 
-                      phoneController.text.isNotEmpty
+                  primarySchoolController.text.isNotEmpty ||
+                    secondarySchoolController.text.isNotEmpty || 
+                      universityController.text.isNotEmpty
                       ? validate = true
                       : validate = false;
                 });
-                
-                if (await addContactInfo() && validate) {
-                  Navigator.of(context).pushNamed("/profile");
+                if (await addEducationInfo() && validate) {
+                  Navigator.of(context).pushNamed("/login");
                 } else {
                   Fluttertoast.showToast(
                       msg: "Error",
@@ -77,38 +74,38 @@ class _AddContactInfoState extends State<AddContactInfo> {
                     children: <Widget>[
                       TextField(
                         decoration: InputDecoration(
-                            labelText: 'Name',
+                            labelText: 'Primary School',
                             labelStyle: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey),
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.green))),
-                        controller: nameController,
+                        controller: primarySchoolController,
                       ),
                       SizedBox(height: 10.0),
                       TextField(
                         decoration: InputDecoration(
-                            labelText: 'Email ',
+                            labelText: 'Secondary School ',
                             labelStyle: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey),
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.green))),
-                        controller: emailController,
+                        controller: secondarySchoolController,
                       ),
                       SizedBox(height: 10.0),
                       TextField(
                         decoration: InputDecoration(
-                            labelText: 'Phone ',
+                            labelText: 'University ',
                             labelStyle: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey),
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.green))),
-                        controller: phoneController,
+                        controller: universityController,
                         keyboardType: TextInputType.number,
                       ),
                       SizedBox(height: 50.0)
@@ -117,14 +114,14 @@ class _AddContactInfoState extends State<AddContactInfo> {
             ]));
   }
 
-  Future<bool> addContactInfo() async {
-    var name = nameController.text;
-    var email = emailController.text;
-    var phone = phoneController.text;
+  Future<bool> addEducationInfo() async {
+    var primary = primarySchoolController.text;
+    var secondary = secondarySchoolController.text;
+    var university = universityController.text;
 
-    if (name.isNotEmpty || email.isNotEmpty || phone.isNotEmpty) {
-      var request = AddContactInfoRequest(name, email, phone);
-      return AddInfoService.addContactInfo(request);
+    if (primary.isNotEmpty || secondary.isNotEmpty || university.isNotEmpty) {
+      var request = AddEducationInfoRequest(primary, secondary, university);
+      return AddInfoService.addEducationInfo(request);
     }
 
     return false;

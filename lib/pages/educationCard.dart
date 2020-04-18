@@ -7,6 +7,7 @@ import 'package:flutter_uuid/models/models.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_uuid/constants.dart';
 
 Container educationCard() {
   return Container(
@@ -126,7 +127,7 @@ Future<EducationInfoModel> _getEducationInfo() async {
   String currentUser = await getUsername();
   String jwtToken = prefs.getString('token');
 
-  final String url = "http://192.168.1.5:8000/users/$currentUser/educationinfo";
+  final String url =  "${AppConstants.baseURL}" + "users/$currentUser/educationinfo";
 
   var response = await http.get(Uri.encodeFull(url), headers: {
     "Accept": "application/json",

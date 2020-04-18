@@ -2,23 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_uuid/services/auth_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class AddContactInfo extends StatefulWidget {
+class AddHealhInfo extends StatefulWidget {
   @override
-  _AddContactInfoState createState() => _AddContactInfoState();
+  _AddHealthInfoState createState() => _AddHealthInfoState();
 }
 
-class _AddContactInfoState extends State<AddContactInfo> {
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
+class _AddHealthInfoState extends State<AddHealhInfo> {
+  final hospitalController = TextEditingController();
+  final bloodGroupController = TextEditingController();
 
   bool validate = false;
 
   @override
   void dispose() {
-    nameController.dispose();
-    emailController.dispose();
-    phoneController.dispose();
+    hospitalController.dispose();
+    bloodGroupController.dispose();
     super.dispose();
   }
 
@@ -31,11 +29,9 @@ class _AddContactInfoState extends State<AddContactInfo> {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("Add Contact Info"),
+          title: new Text("Add Education Info"),
           leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
+            onTap: () => Navigator.pop(context),
             child: Icon (
               Icons.arrow_back,
             ),
@@ -46,15 +42,13 @@ class _AddContactInfoState extends State<AddContactInfo> {
               child: Text("SAVE", style: TextStyle(fontSize: 15)),
               onPressed: () async {
                 setState(() {
-                  nameController.text.isNotEmpty ||
-                    emailController.text.isNotEmpty|| 
-                      phoneController.text.isNotEmpty
+                  hospitalController.text.isNotEmpty ||
+                    bloodGroupController.text.isNotEmpty
                       ? validate = true
                       : validate = false;
                 });
-                
-                if (await addContactInfo() && validate) {
-                  Navigator.of(context).pushNamed("/profile");
+                if (await addHealthInfo() && validate) {
+                  Navigator.of(context).pushNamed("/login");
                 } else {
                   Fluttertoast.showToast(
                       msg: "Error",
@@ -77,54 +71,40 @@ class _AddContactInfoState extends State<AddContactInfo> {
                     children: <Widget>[
                       TextField(
                         decoration: InputDecoration(
-                            labelText: 'Name',
+                            labelText: 'Primary School',
                             labelStyle: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey),
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.green))),
-                        controller: nameController,
+                        controller: hospitalController,
                       ),
                       SizedBox(height: 10.0),
                       TextField(
                         decoration: InputDecoration(
-                            labelText: 'Email ',
+                            labelText: 'Secondary School ',
                             labelStyle: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey),
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.green))),
-                        controller: emailController,
+                        controller: bloodGroupController,
                       ),
                       SizedBox(height: 10.0),
-                      TextField(
-                        decoration: InputDecoration(
-                            labelText: 'Phone ',
-                            labelStyle: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey),
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.green))),
-                        controller: phoneController,
-                        keyboardType: TextInputType.number,
-                      ),
-                      SizedBox(height: 50.0)
-                    ],
+                                          ],
                   )),
             ]));
   }
 
-  Future<bool> addContactInfo() async {
-    var name = nameController.text;
-    var email = emailController.text;
-    var phone = phoneController.text;
+  Future<bool> addHealthInfo() async {
+    var hospital = hospitalController.text;
+    var bloodGroup = bloodGroupController.text;
 
-    if (name.isNotEmpty || email.isNotEmpty || phone.isNotEmpty) {
-      var request = AddContactInfoRequest(name, email, phone);
-      return AddInfoService.addContactInfo(request);
+    if (hospital.isNotEmpty || bloodGroup.isNotEmpty) {
+      var request = AddHealthInfoRequest(hospital, bloodGroup);
+      return AddInfoService.addHealthInfo(request);
     }
 
     return false;
